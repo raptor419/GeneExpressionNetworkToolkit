@@ -1,0 +1,99 @@
+#-------------------## feature selection BNN ## ------------------------#
+
+#setwd("E:\\RShinyapp\\networksanalysis\\code")
+#setwd("C://Networks//code//")
+require(igraph)
+require(BNN)
+test <- e$edata[,-((ncol(norm_data())-1): (ncol(norm_data())))]
+#rownames(test) <- edata[,2]
+test[is.na(test)] <- as.numeric(0)
+new<- t(test)
+splitted_groups <- e$mdata[,2]
+#give option to users to split by disease and cell type
+required_format<- cbind(splitted_groups, new)
+tempdf <- as.data.frame(required_format)
+tempdf$splitted_groups <- as.factor(tempdf$splitted_groups)
+splitted_groups <- split(tempdf,tempdf$splitted_groups)
+require(pbapply)
+pv <- pbapply(tempdf[,-1], 2, function(x){
+  oneway.test(x ~ tempdf$splitted_groups,data=tempdf[,-1])$p.value
+})
+pvalue <- data.frame(pv)
+testdata <- cbind(pvalue,test)
+deg<-subset(testdata,testdata$pv < 0.05)
+drop <- c("fdr", "ID_REF")
+deg_droped = deg[,!(names(deg) %in% drop)]
+assoc <- cor(t(deg_droped), method = "pearson")
+mi_nonzero <- assoc
+diag(mi_nonzero) <- 0
+require(reshape2)
+edgelist_mi_nonzero <- melt(mi_nonzero)
+edglist <- calculate.PFN(as.data.frame(edgelist_mi_nonzero))
+ad <- nrow(edglist)
+edglist <- edglist[1:ad,]
+edgelist <- edglist
+edgelist["abs_value"] <- abs(edgelist[,3])
+edgelist = edgelist[,-3]
+graph_obj <- graph.data.frame(edgelist)
+imap_comm_det <- cluster_infomap(graph_obj, e.weights = edgelist[,3], v.weights = edgelist[,1], nb.trials = 10,
+                                 modularity = F)
+#total number of communities
+total_com <- max(imap_comm_det$membership)
+expression_data_gds5037 <- e$edata
+drops <- c("X")
+expression_df_gds5037 <- expression_data_gds5037[ , !(names(expression_data_gds5037) %in% drops)]
+diseased <- e$diseased
+metadata_gds5037 <- e$mdata
+metadata_gds5037 <- metadata_gds5037[,-1]
+require(Boruta)
+
+bnn_features <- list()
+bnn_names <- list()
+for(i in (1:total_com))
+{
+  module_i <- as.data.frame(imap_comm_det[i])
+  if(nrow(module_i) > 0){
+    colnames(module_i) <- 'ID_REF'
+    fetch_gene_expression<- merge(module_i,expression_df_gds5037, by='ID_REF',sort=F)
+    rownames(fetch_gene_expression) <- fetch_gene_expression[,1]
+    fetch_gene_expression <- fetch_gene_expression[,-1]
+    fetch_gene_expression <- fetch_gene_expression[,-ncol(fetch_gene_expression)]
+    rownames(fetch_gene_expression) <- as.factor(rownames(fetch_gene_expression))
+    fetch_gene_expression_transpose <- t(fetch_gene_expression)
+    fetch_gene_expression_class <- cbind(metadata_gds5037$disease.state, fetch_gene_expression_transpose)
+    fetch_gene_expression_class <- as.data.frame(fetch_gene_expression_class)
+    fg.X <- t(fetch_gene_expression[1:nrow(fetch_gene_expression),])
+    ans <- colnames(fg.X)
+    rownames(fg.X) <- NULL
+    colnames(fg.X) <- NULL
+    fg.Y <- diseased[,1]
+    bnn <- BNNsel(fg.X,fg.Y,total_iteration = 5)
+    for(j in (1:ncol(fg.X))){
+      if(j<=length(bnn$fit) && bnn$fit[j]>0.5){
+        bnn_features[[j]] <- ans[j]
+        bnn_features[[j]] <- as.data.frame(bnn_features[[j]])
+        print(bnn_features[[j]])
+      }
+    }
+    #png(paste("Boruta_module",i,".png"), width = 480, height = 480, units = "px", pointsize = 12)
+    #plot(boruta,las=2, xlab= " ")
+    #dev.off()
+    #final decision tells confirmed rejected and tentative for all genes of a module
+    #write.csv(boruta$finalDecision, paste("boruta_module",i,".csv"))
+    
+  }
+}
+require(plyr)
+combine_bnn_features <- ldply(bnn_features,data.frame)
+combine_bnn_features_omit_na <- na.omit(combine_bnn_features)
+combine_bnn_features_omit_na <- as.data.frame(combine_bnn_features_omit_na)
+if (length(bnn_features)!=0) {
+  colnames(combine_bnn_features_omit_na) <- 'ID_REF'
+  fetch_gene_expression_df<- merge(combine_bnn_features_omit_na,expression_df_gds5037, by='ID_REF',sort=F)
+} else {
+  combine_bnn_features_omit_na[1,1] <- 'No significant genes'
+  colnames(combine_bnn_features_omit_na) <- 'ID_REF'
+  fetch_gene_expression_df<- merge(combine_bnn_features_omit_na,expression_df_gds5037, by='ID_REF',sort=F)
+}
+write.csv(fetch_gene_expression_df,"Feature_Selection.csv")
+
