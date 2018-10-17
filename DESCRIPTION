@@ -8,8 +8,8 @@ Authors@R: c(person("Tavpritesh", "Developer", role = c("aut", "cre"),
 Author: Tavpritesh Sethi [aut, cre],
   Devishi Kesar [aut]
 Maintainer: Tavpritesh Sethi <tavpriteshsethi@iiitd.ac.in>
-Depends: R (>= 3.1.0), GEOmetadb, limma, pbapply, igraph, shinyBS, reshape2, BNN, minerva, ggplot2, Biobase, edgeR, ggplot2, philentropy, plotly, shinythemes, shiny
-Imports: networkd3
+Depends: R (>= 3.1.0), pbapply, igraph, shinyBS, reshape2, BNN, data.table, minerva, ggplot2, ggplot2, philentropy, plotly, networkD3, shinythemes, shiny
+biocViews: GEOmetadb, BiocUpgrade, Biobase, limma, edgeR
 Description: A (one paragraph) description of what
   the package does and why it may be useful.
 License: GPL (>= 2)
