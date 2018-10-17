@@ -4,23 +4,23 @@
 # other libraries install pbapply, limma, shinyBS,shinythemes, shiny, networkd3,
 # change working directory in all code files
 ## For first time running: 
-  # Install libraries 
-  # source("http://bioconductor.org/biocLite.R")
-  # biocLite("BiocUpgrade")
-  # biocLite("GEOmetadb")
-  # biocLite("Biobase")
-  # biocLite("limma")
-  # biocLite("edgeR")
-  # getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz")
-  # install.packages("ggplot2")
-  # install.packages("philentropy")
-  # install.packages("minerva")
-  # install.packages("BNN")
-  # install.packages("data.table")
-  # install.packages("plotly")
-  # install.packages("pbapply")
-  # install.packages("reshape2")
-  # install.packages("igraph")
+# Install libraries 
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("BiocUpgrade")
+# biocLite("GEOmetadb")
+# biocLite("Biobase")
+# biocLite("limma")
+# biocLite("edgeR")
+# getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz")
+# install.packages("ggplot2")
+# install.packages("philentropy")
+# install.packages("minerva")
+# install.packages("BNN")
+# install.packages("data.table")
+# install.packages("plotly")
+# install.packages("pbapply")
+# install.packages("reshape2")
+# install.packages("igraph")
 
 
 library(GEOmetadb)
@@ -180,7 +180,7 @@ server <- function(input, output) {
     e <- new.env()
     e$edata <- norm_data()
     e$idf <- input$gdsid
-    #read.csv("exprsdata_gds5037.csv")  ##expressiondata()
+    #read.csv("exprsdata.csv")  ##expressiondata()
     e$mdata <- metadata()
     diseased <- matrix(metadata()[,2])
     s <- as.data.frame(levels(metadata()[,2]))
@@ -189,7 +189,7 @@ server <- function(input, output) {
       diseased[i] <- which(grepl(metadata()[i,2], s$`levels(metadata()[, 2])`)) - 1
     }
     e$diseased <- diseased
-    #read.csv("metadata_gds5037.csv") ##metadata()
+    #read.csv("metadata.csv") ##metadata()
     sys.source("minimal_gl.R", e)
     #feature_selection_output()
     e$fetch_gene_expression_df
@@ -208,7 +208,7 @@ server <- function(input, output) {
     mdata <- metadata()
     if(input$raw_df == TRUE){ test <- edata[,-(1:2)]}
     if(input$norm_df == TRUE){test <- norm_data()[,-((ncol(norm_data())-1): (ncol(norm_data())))]}
-
+    
     #rownames(test) <- edata[,2]
     #test <- test[(1:500),]
     test[is.na(test)] <- as.numeric(0)
@@ -426,9 +426,9 @@ server <- function(input, output) {
   rf_deg_cent_res <- eventReactive(input$plot_degcen_but, {
     e <- new.env()
     e$edata <- norm_data()
-    #read.csv("exprsdata_gds5037.csv")  ##expressiondata()
+    #read.csv("exprsdata.csv")  ##expressiondata()
     e$mdata <- metadata()
-    #read.csv("metadata_gds5037.csv") ##metadata()
+    #read.csv("metadata.csv") ##metadata()
     e$edgelist <- edgelist_table()
     if(input$netpars == 'dcen'){
       e$net_param = 'degree_cent'
@@ -437,8 +437,8 @@ server <- function(input, output) {
       e$net_param = "edge_bet"
     }
     #e <- new.env()
-    #e$edata <- read.csv("exprsdata_gds5037.csv")  ##expressiondata()
-    #e$mdata <- read.csv("metadata_gds5037.csv") ##metadata()
+    #e$edata <- read.csv("exprsdata.csv")  ##expressiondata()
+    #e$mdata <- read.csv("metadata.csv") ##metadata()
     #e$edgelist <- edgelist_table()
     sys.source("random_forest_network_params.R", e)
     e$rf_result
@@ -484,11 +484,11 @@ server <- function(input, output) {
     e <- new.env()
     e$edata <- norm_data()
     e$idf <- input$gdsid
-    #read.csv("exprsdata_gds5037.csv")  ##expressiondata()
+    #read.csv("exprsdata.csv")  ##expressiondata()
     e$mdata <- metadata()
-    #read.csv("metadata_gds5037.csv") ##metadata()
+    #read.csv("metadata.csv") ##metadata()
     e$edgelist <- edgelist_table()
-      sys.source("feature_selection_bnn.R", e)
+    sys.source("feature_selection_bnn.R", e)
     #feature_selection_output()
     e$fetch_gene_expression_df
   })
