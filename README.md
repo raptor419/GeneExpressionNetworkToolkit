@@ -24,7 +24,7 @@ Then you can load the package and use the function `install_github`
 
 ```
 library(devtools)
-install_github("bstewart/stm",dependencies=TRUE)
+install_github("SAFE-ICU/GeneExpressionNetworkToolkit",dependencies=TRUE)
 ```
 
 Note that this will install all the packages suggested and required to run our package.  It may take a few minutes the first time, but this only needs to be done on the first use.  In the future you can update to the most recent development version using the same code.
