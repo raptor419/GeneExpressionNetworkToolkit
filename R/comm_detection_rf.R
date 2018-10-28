@@ -25,10 +25,10 @@ total_com <- max(imap_comm_det$membership)
 
 
 #predictive analysis per module
-expression_data_gds5037 <- read.csv("exprsdata_gds5037.csv")
+expression_data_gds5037 <- read.csv("exprsdata.csv")
 drops <- c("X")
 expression_df_gds5037 <- expression_data_gds5037[ , !(names(expression_data_gds5037) %in% drops)]
-metadata_gds5037 <- read.csv("metadata_gds5037.csv")
+metadata_gds5037 <- read.csv("metadata.csv")
 metadata_gds5037 <- metadata_gds5037[,-1]
 require("randomForest")
 
