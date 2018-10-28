@@ -2,13 +2,11 @@
 #'
 #' @description Launch the ShinyApp
 #'
-#' @param 
+#' @param
 #'
 #' @return NULL
 #'
 #' @examples launch_application()
-#'
-#' @export
 
 launch_application <- function()
 {
