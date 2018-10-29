@@ -1,3 +1,4 @@
+#' @title Launch Application
 #' @export
 launch_application <- function()
 {
