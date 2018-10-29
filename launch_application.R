@@ -1,4 +1,5 @@
-.launch_application <- function(x)
+#' @export
+launch_application <- function()
 {
   shiny::runApp(appDir = system.file(package = GeneExpressionNetworkToolkit))
 }
