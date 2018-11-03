@@ -2,7 +2,12 @@
 #' @export
 launch_application <- function()
 {
-  library(GEOmetadb)
-  getSQLiteFile(destdir = getwd(), destfile = "GEOmetadb.sqlite.gz")
+  input.good = "~/inst/GENT/GEOmetadb.sqlite"
+  if(!file_test("-f", input.good)){
+    library(GEOmetadb)
+    dirs = paste(getwd(), "inst/GENT", sep="/")
+    getSQLiteFile(destdir = dirs, destfile = "GEOmetadb.sqlite.gz")
+  }
   shiny::runApp(system.file('GENT', package = "GeneExpressionNetworkToolkit"))
 }
+
