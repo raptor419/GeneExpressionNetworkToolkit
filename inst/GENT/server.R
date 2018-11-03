@@ -64,6 +64,8 @@ server <- function(input, output) {
     a <- c("timecourse","time series","time-series","timeseries","timepoint","time point","time-point","time-course","time course")
     g[- grep(paste(a,collapse="|"),g[,3]), ] 
   })
+  print(con)
+  print(query)
   output$download_df <- renderDataTable({df()})
   
   #view expression data
