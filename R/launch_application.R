@@ -2,7 +2,7 @@
 #' @export
 launch_application <- function()
 {
-  input.good = "~/inst/GENT/GEOmetadb.sqlite"
+  input.good = paste(getwd(), "inst/GENT/GEOmetadb.sqlite", sep="/")
   if(!file_test("-f", input.good)){
     library(GEOmetadb)
     dirs = paste(getwd(), "inst/GENT", sep="/")
