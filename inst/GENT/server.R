@@ -90,6 +90,8 @@ server <- function(input, output) {
           write.csv(edata, con)
         })
     }
+    print(gds_id)
+    print(con)
     gds_id<-gds_subset[,2]
     gds <- getGEO(gds_id[which(gds_id == input$gdsid)])
     Table(gds)

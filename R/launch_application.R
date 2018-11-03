@@ -1,6 +1,6 @@
 #' @title Launch Application
 #' @export
-launch_application <- function()
+launch_appl <- function()
 {
   input.good = paste(getwd(), "inst/GENT/GEOmetadb.sqlite", sep="/")
   if(!file_test("-f", input.good)){
